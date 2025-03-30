@@ -1,13 +1,13 @@
 import React from "react";
-import {cn, getTechLogos} from "@/lib/utils";
+import { cn, getTechLogos } from "@/lib/utils";
 import Image from "next/image";
 
-const DisplayTechIcons = async ({techStack}: TechIconProps) => {
+const DisplayTechIcons = async ({ techStack }: TechIconProps) => {
   const techIcons = await getTechLogos(techStack);
 
   return (
     <div className="flex flex-row">
-      {techIcons.slice(0, 3).map(({tech, url}, index) => (
+      {techIcons.slice(0, 3).map(({ tech, url }, index) => (
         <div
           key={tech}
           className={cn(
