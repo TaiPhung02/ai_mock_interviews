@@ -1,12 +1,12 @@
 "use server";
 
-import {db, auth} from "@/firebase/admin";
-import {cookies} from "next/headers";
+import { db, auth } from "@/firebase/admin";
+import { cookies } from "next/headers";
 
 const ONE_WEEK = 60 * 60 * 24 * 7;
 
 export async function signUp(params: SignUpParams) {
-  const {uid, name, email, password} = params;
+  const { uid, name, email, password } = params;
 
   try {
     const userRecord = await db.collection("users").doc(uid).get();
@@ -45,7 +45,7 @@ export async function signUp(params: SignUpParams) {
 }
 
 export async function signIn(params: SignInParams) {
-  const {email, idToken} = params;
+  const { email, idToken } = params;
 
   try {
     const userRecord = await auth.getUserByEmail(email);
@@ -96,13 +96,16 @@ export async function getCurrentUser(): Promise<User | null> {
   try {
     const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
 
-    const userRecord = await db.collection("users").doc(decodedClaims.uid).get();
+    const userRecord = await db
+      .collection("users")
+      .doc(decodedClaims.uid)
+      .get();
 
     if (!userRecord.exists) {
       return null;
     }
 
-    return {...userRecord.data(), id: userRecord.id} as User;
+    return { ...userRecord.data(), id: userRecord.id } as User;
   } catch (e: any) {
     console.log("Error getting current user", e);
 
