@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import {cn} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -9,7 +9,7 @@ enum CallStatus {
   FINISHED = "FINISHED",
 }
 
-const Agent = ({userName}: AgentProps) => {
+const Agent = ({ userName }: AgentProps) => {
   const callStatus = CallStatus.ACTIVE;
   const isSpeaking = true;
   const messages = ["What's your name?", "Hello, how can I help you?"];
@@ -28,7 +28,7 @@ const Agent = ({userName}: AgentProps) => {
               height={54}
               className="object-cover"
             />
-            {isSpeaking && <span className="animate-speak"/>}
+            {isSpeaking && <span className="animate-speak" />}
           </div>
           <h3>AI Interviewer</h3>
         </div>
