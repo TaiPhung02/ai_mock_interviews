@@ -1,11 +1,12 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import {cn} from "@/lib/utils";
-import {useRouter} from "next/navigation";
-import {vapi} from "@/lib/vapi.sdk";
-import {interviewer} from "@/constants";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import { vapi } from "@/lib/vapi.sdk";
+import { interviewer } from "@/constants";
+import { createFeedback } from "@/lib/actions/general.action";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -20,12 +21,12 @@ interface SavedMessage {
 }
 
 const Agent = ({
-                 userName,
-                 userId,
-                 type,
-                 interviewId,
-                 questions,
-               }: AgentProps) => {
+  userName,
+  userId,
+  type,
+  interviewId,
+  questions,
+}: AgentProps) => {
   const router = useRouter();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
@@ -37,7 +38,7 @@ const Agent = ({
 
     const onMessage = (message: Message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
-        const newMessage = {role: message.role, content: message.transcript};
+        const newMessage = { role: message.role, content: message.transcript };
 
         setMessages((prev) => [...prev, newMessage]);
       }
@@ -68,10 +69,11 @@ const Agent = ({
   const handleGenerateFeedback = async (messages: SavedMessage[]) => {
     console.log("Generate feedback here");
 
-    const {success, id} = {
-      success: true,
-      id: "feedback-id",
-    };
+    const { success, feedbackId: id } = await createFeedback({
+      interviewId: interviewId!,
+      userId: userId!,
+      transcript: messages,
+    });
 
     if (success && id) {
       router.push(`/interview/${interviewId}/feedback`);
@@ -113,8 +115,8 @@ const Agent = ({
       await vapi.start(interviewer, {
         variableValues: {
           questions: formattedQuestions,
-        }
-      })
+        },
+      });
     }
   };
 
@@ -124,7 +126,7 @@ const Agent = ({
     vapi.stop();
   };
 
-  const lastestMessage = messages[messages.length - 1]?.content;
+  const latestMessage = messages[messages.length - 1]?.content;
   const isCallInactiveOrFinished =
     callStatus === CallStatus.INACTIVE || callStatus === CallStatus.FINISHED;
 
@@ -140,7 +142,7 @@ const Agent = ({
               height={54}
               className="object-cover"
             />
-            {isSpeaking && <span className="animate-speak"/>}
+            {isSpeaking && <span className="animate-speak" />}
           </div>
           <h3>AI Interviewer</h3>
         </div>
@@ -163,13 +165,13 @@ const Agent = ({
         <div className="transcript-border">
           <div className="transcript">
             <p
-              key={lastestMessage}
+              key={latestMessage}
               className={cn(
                 "transition-opacity duration-500 opacity-0",
                 "animate-fadeIn opacity-100",
               )}
             >
-              {lastestMessage}
+              {latestMessage}
             </p>
           </div>
         </div>
