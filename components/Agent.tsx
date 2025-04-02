@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { vapi } from "@/lib/vapi.sdk";
 import { interviewer } from "@/constants";
 import { createFeedback } from "@/lib/actions/general.action";
+import { useLanguage } from "@/context/LanguageContext";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -31,6 +32,7 @@ const Agent = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
+  const { language, voiceGender } = useLanguage();  // Lấy cả voiceGender từ context
 
   useEffect(() => {
     const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
@@ -112,7 +114,8 @@ const Agent = ({
           .join("\n");
       }
 
-      await vapi.start(interviewer, {
+      // Truyền thêm voiceGender vào hàm `interviewer`
+      await vapi.start(interviewer(language as "vi" | "en", voiceGender), {
         variableValues: {
           questions: formattedQuestions,
         },
