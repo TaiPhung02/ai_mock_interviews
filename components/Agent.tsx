@@ -99,12 +99,24 @@ const Agent = ({
     setCallStatus(CallStatus.CONNECTING);
 
     if (type === "generate") {
-      await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
-        variableValues: {
-          username: userName,
-          userid: userId,
-        },
-      });
+      let workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID_EN_MALE!;
+
+      if (language === "vi" && voiceGender === "male") {
+        workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID_VI_MALE!;
+      } else if (language === "vi" && voiceGender === "female") {
+        workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID_VI_FEMALE!;
+      } else if (language === "en" && voiceGender === "male") {
+        workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID_EN_MALE!;
+      } else if (language === "en" && voiceGender === "female") {
+        workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID_EN_FEMALE!;
+      }
+
+      await vapi.start(workflowId, {
+      variableValues: {
+        username: userName,
+        userid: userId,
+      },
+    });
     } else {
       let formattedQuestions = "";
 
@@ -114,7 +126,6 @@ const Agent = ({
           .join("\n");
       }
 
-      // Truyền thêm voiceGender vào hàm `interviewer`
       await vapi.start(interviewer(language as "vi" | "en", voiceGender), {
         variableValues: {
           questions: formattedQuestions,
