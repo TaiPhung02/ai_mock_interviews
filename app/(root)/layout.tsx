@@ -19,7 +19,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         <nav className="flex justify-between items-center p-4">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/logo.svg" alt="Logo" height={32} width={38} />
-            <h2 className="text-primary-100">PrepWise.</h2>
+            <h2 className="text-primary-100">MockTalk.</h2>
           </Link>
 
           {user && <UserDropdown username={user.name} />}
